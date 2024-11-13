@@ -1,19 +1,17 @@
-import { useState } from "react";
-import "./App.css";
+// src/App.jsx
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Customers from "./pages/Customers";
 
-function App() {
-  const [message, setMessage] = useState("Olá mundo");
-
+const App = () => {
   return (
-    <div>
-      <h1>{message}</h1>
-      <button
-        onClick={() => {
-          setMessage("Clicado");
-        }}
-      ></button>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/customers" element={<Customers />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
