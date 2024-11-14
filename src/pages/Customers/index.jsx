@@ -16,6 +16,8 @@ import {
 } from "@mui/material";
 import { Visibility, Edit } from "@mui/icons-material"; // Importando os ícones
 import api from "../../services/api";
+import CustomerModal from "../../components/CustomerModal";
+import Feedback from "../../components/Feedback";
 
 export default function Customers() {
   const [customers, setCustomers] = useState([]);
@@ -30,6 +32,14 @@ export default function Customers() {
     document: "",
     phone: "",
     email: "",
+  });
+  const [isModalOpen, setModalOpen] = useState(false);
+  const openModal = () => setModalOpen(true);
+  const closeModal = () => setModalOpen(false);
+  const [feedback, setFeedback] = useState({
+    open: false,
+    message: "",
+    type: "",
   });
 
   // Função para buscar os clientes com os filtros aplicados
@@ -120,6 +130,15 @@ export default function Customers() {
     }
   };
 
+  const handleCreateCustomer = () => {
+    fetchCustomers(currentPage, pageSize, filters);
+    closeModal();
+  };
+
+  const handleFeedback = (feedbackData) => {
+    setFeedback(feedbackData);
+  };
+
   // Exibição de loading ou erro
   if (loading) return <p>Carregando clientes...</p>;
   if (error) return <p>{error}</p>;
@@ -131,9 +150,27 @@ export default function Customers() {
       </Typography>
 
       {/* Botão "Novo" alinhado à direita e sem cor */}
-      <Button variant="outlined" sx={{ float: "right", marginBottom: "20px" }}>
+      <Button
+        variant="outlined"
+        sx={{ float: "right", marginBottom: "20px" }}
+        onClick={openModal}
+      >
         Novo
       </Button>
+      <Feedback
+        open={feedback.open}
+        onClose={() => setFeedback({ ...feedback, open: false })}
+        message={feedback.message}
+        type={feedback.type}
+      />
+      {isModalOpen && (
+        <CustomerModal
+          open={isModalOpen}
+          onClose={closeModal}
+          onCreate={handleCreateCustomer}
+          onFeedback={handleFeedback} // Passando o método de feedback para o modal
+        />
+      )}
 
       {/* Filtros */}
       <Grid container spacing={2} style={{ marginBottom: "20px" }}>
