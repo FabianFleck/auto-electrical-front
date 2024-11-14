@@ -34,6 +34,7 @@ export default function Customers() {
     email: "",
   });
   const [isModalOpen, setModalOpen] = useState(false);
+  const [editingCustomer, setEditingCustomer] = useState(null); // Estado para o cliente em edição
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
   const [feedback, setFeedback] = useState({
@@ -64,7 +65,7 @@ export default function Customers() {
       setCurrentPage(response.data.number);
       setTotalElements(response.data.totalElements);
     } catch (err) {
-      setError("Erro ao carregar clientes.");
+      setError(err);
     } finally {
       setLoading(false);
     }
@@ -139,6 +140,16 @@ export default function Customers() {
     setFeedback(feedbackData);
   };
 
+  const handleNewCustomer = () => {
+    setEditingCustomer(null); // Define o cliente para edição
+    openModal(); // Abre o modal
+  };
+
+  const handleEditCustomer = (customer) => {
+    setEditingCustomer(customer); // Define o cliente para edição
+    openModal(); // Abre o modal
+  };
+
   // Exibição de loading ou erro
   if (loading) return <p>Carregando clientes...</p>;
   if (error) return <p>{error}</p>;
@@ -153,7 +164,7 @@ export default function Customers() {
       <Button
         variant="outlined"
         sx={{ float: "right", marginBottom: "20px" }}
-        onClick={openModal}
+        onClick={handleNewCustomer}
       >
         Novo
       </Button>
@@ -169,6 +180,7 @@ export default function Customers() {
           onClose={closeModal}
           onCreate={handleCreateCustomer}
           onFeedback={handleFeedback} // Passando o método de feedback para o modal
+          customerToEdit={editingCustomer} // Passa o cliente selecionado para o modal
         />
       )}
 
@@ -282,7 +294,7 @@ export default function Customers() {
                   </IconButton>
                   <IconButton
                     color="secondary"
-                    onClick={() => alert(`Editar cliente ${customer.name}`)} // Exemplo de ação de edição
+                    onClick={() => handleEditCustomer(customer)} // Chama a função de edição ao clicar no ícone de editar
                   >
                     <Edit />
                   </IconButton>
